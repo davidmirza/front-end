@@ -6,7 +6,7 @@ export default function Product() {
   const [Category, setCategory] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [isSort, setSort] = useState(false);
-  const [slcCat, setSclCat] = useState('');
+  const [slcCat, setSclCat] = useState("");
   const getProducts = async () => {
     setLoading(true);
     let tmp = [];
@@ -19,10 +19,12 @@ export default function Product() {
   const getProductsCat = async (categori) => {
     setLoading(true);
     let tmp = [];
-    const response = await fetch(`https://dummyjson.com/products/category/${categori}`);
+    const response = await fetch(
+      `https://dummyjson.com/products/category/${categori}`
+    );
     const data = await response.json();
     tmp = data.products;
-    console.log(tmp)
+    console.log(tmp);
     setProducts(tmp);
     setLoading(false);
   };
@@ -37,23 +39,35 @@ export default function Product() {
   }, []);
   async function checkdata() {
     setSort(!isSort);
-  };
-  const CatChange = event => {
-    console.log(event.target.value);
+  }
+  const CatChange = (event) => {
     setSclCat(event.target.value);
     getProductsCat(event.target.value);
   };
-
+  const OrderBy_ = (e) => {
+    setSort(!isSort);
+    if (!isSort) {
+      const sAsc = [...products].sort((a, b) => a.price - b.price);
+      setProducts(sAsc);
+    } else {
+      const sDesc = [...products].sort((a, b) => b.price - a.price);
+      setProducts(sDesc);
+    }
+  };
   if (isLoading) return "Fetching Data ...";
   return (
     <>
       <div className="product-desc center">
-      <select onChange={CatChange}>
-        {Category.map((v) => (
-  <option key={v} value={v} >{v}</option>
-        ))}
-      </select>
-         <div>Sort by Price </div> <button onClick={() => setSort(!isSort)}>{(isSort?'ASC':'DESC')}</button>
+        Category{" "}
+        <select onChange={CatChange}>
+          {Category.map((v) => (
+            <option key={v} value={v}>
+              {v}
+            </option>
+          ))}
+        </select>
+        <div>| Sort by Price </div>{" "}
+        <button onClick={OrderBy_}>{isSort ? "ASC" : "DESC"}</button>
       </div>
       <section className="product-item">
         {products.map((val) => (
