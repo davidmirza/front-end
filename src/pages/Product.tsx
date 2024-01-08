@@ -3,29 +3,56 @@ import { useEffect, useState } from "react";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
+  const [Category, setCategory] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const [isSort, setSort] =useState(false);
+  const [isSort, setSort] = useState(false);
+  const [slcCat, setSclCat] = useState('');
   const getProducts = async () => {
     setLoading(true);
     let tmp = [];
     const response = await fetch("https://dummyjson.com/products");
     const data = await response.json();
     tmp = data.products;
-    console.log(tmp);
     setProducts(tmp);
     setLoading(false);
   };
+  const getProductsCat = async (categori) => {
+    setLoading(true);
+    let tmp = [];
+    const response = await fetch(`https://dummyjson.com/products/category/${categori}`);
+    const data = await response.json();
+    tmp = data.products;
+    console.log(tmp)
+    setProducts(tmp);
+    setLoading(false);
+  };
+  const getCategory = async () => {
+    const response = await fetch("https://dummyjson.com/products/categories");
+    const ctg = await response.json();
+    setCategory(ctg);
+  };
   useEffect(() => {
     getProducts();
+    getCategory();
   }, []);
   async function checkdata() {
     setSort(!isSort);
-  }
+  };
+  const CatChange = event => {
+    console.log(event.target.value);
+    setSclCat(event.target.value);
+    getProductsCat(event.target.value);
+  };
+
   if (isLoading) return "Fetching Data ...";
   return (
     <>
       <div className="product-desc center">
-        <input type="text" className="s-bar " placeholder="Search..." />
+      <select onChange={CatChange}>
+        {Category.map((v) => (
+  <option key={v} value={v} >{v}</option>
+        ))}
+      </select>
          <div>Sort by Price </div> <button onClick={() => setSort(!isSort)}>{(isSort?'ASC':'DESC')}</button>
       </div>
       <section className="product-item">
